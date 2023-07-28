@@ -1,10 +1,16 @@
+import jwt_decode from "jwt-decode";
+
 const localStorageKey = "token";
 const authURL = `${import.meta.env.VITE_REACT_APP_API_URL}/auth`;
 
+function getCurrentUser() {
+  const token = window.localStorage.getItem(localStorageKey);
+  const decoded = jwt_decode(token);
+  const { id: userId, email: userEmail } = decoded;
+  return { userId, userEmail };
+}
+
 function getToken() {
-  if (!window.localStorage.getItem(localStorageKey)) {
-    return;
-  }
   return window.localStorage.getItem(localStorageKey);
 }
 
@@ -56,4 +62,4 @@ async function client(endpoint, data) {
     });
 }
 
-export { getToken, login, register, logout, localStorageKey };
+export { getToken, login, register, logout, localStorageKey, getCurrentUser };

@@ -11,7 +11,6 @@ const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [socket, setSocket] = useState(null);
-  const [friends, setFriends] = useState([]);
   const [recipientId, setRecipientId] = useState(null);
   const config = {
     method: "GET",
@@ -20,6 +19,19 @@ const Chat = () => {
       Authorization: `Bearer ${auth.getToken()}`,
     },
   };
+
+  useEffect(() => {
+    const serverUrl = "http://localhost:4000";
+    const newSocket = io(serverUrl);
+
+    setSocket(newSocket);
+
+    return () => {
+      if (newSocket) {
+        newSocket.disconnect();
+      }
+    };
+  }, []);
 
   const fetchChatHistory = async () => {
     try {
@@ -41,55 +53,16 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    const serverUrl = "http://localhost:4000";
-    const newSocket = io(serverUrl);
-
-    setSocket(newSocket);
-
-    return () => {
-      if (newSocket) {
-        newSocket.disconnect();
-      }
-    };
-  }, []);
-
-  useEffect(() => {
     if (recipientId && socket) {
       fetchChatHistory();
 
       socket.on("new-message", (newMessage) => {
         if (newMessage.sender === recipientId) {
-          // Fetch chat history again when a new message is received
           fetchChatHistory();
         }
       });
     }
   }, [recipientId, socket]);
-
-  useEffect(() => {
-    getAllFriends();
-  }, []);
-
-  const getAllFriends = async () => {
-    const config = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${auth.getToken()}`,
-      },
-    };
-
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_REACT_APP_API_URL}/me/getFriends`,
-        config
-      );
-      const data = await response.json();
-      setFriends(data);
-    } catch (error) {
-      console.error("Failed to get friends:", error);
-    }
-  };
 
   const handleSendMessage = async (event) => {
     event.preventDefault();
@@ -124,18 +97,8 @@ const Chat = () => {
 
   return (
     <div>
-      <div>
-        {messages?.map((messageData, index) => (
-          <div key={index}>
-            <span>{messageData.sender}</span>
-            <span>{messageData.message}</span>
-          </div>
-        ))}
-      </div>
-
-      <h2>Friends {friends.length}</h2>
       <Friend
-        friends={friends}
+        messages={messages}
         setRecipientId={setRecipientId}
         handleSendMessage={handleSendMessage}
         setMessage={setMessage}
