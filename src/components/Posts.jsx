@@ -2,8 +2,8 @@ import * as auth from "../utils/auth-provider";
 import { useState, useEffect } from "react";
 import { client } from "../utils/api-client";
 import Post from "./Post";
-import io from "socket.io-client";
 import { socket as mySocket } from "../socket";
+import Comment from "./Comment";
 
 const Posts = () => {
   const token = auth.getToken();
@@ -83,11 +83,10 @@ const Posts = () => {
       </form>
       <div>
         {posts.map((post) => (
-          <Post
-            onDeletePost={() => setDeletedPostId(post._id)}
-            key={post._id}
-            post={post}
-          />
+          <div key={post._id}>
+            <Post onDeletePost={() => setDeletedPostId(post._id)} post={post} />
+            <Comment post={post._id} />
+          </div>
         ))}
       </div>
     </>

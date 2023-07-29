@@ -2,7 +2,7 @@
 // o sa display-uim poza, userul, data, description, nr of likes, si commenturile
 import React, { useEffect, useState } from "react";
 import * as auth from "../utils/auth-provider";
-
+import Comment from "./Comment";
 const Post = ({ post }) => {
   const token = auth.getToken();
   const { userId } = auth.getCurrentUser();
