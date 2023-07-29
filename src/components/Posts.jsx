@@ -2,22 +2,67 @@ import * as auth from "../utils/auth-provider";
 import { useState, useEffect } from "react";
 import { client } from "../utils/api-client";
 import Post from "./Post";
+import io from "socket.io-client";
+import { socket as mySocket } from "../socket";
 
 const Posts = () => {
   const token = auth.getToken();
 
   const [posts, setPosts] = useState([]);
-  const requestOptions = {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
+  const [socket, setSocket] = useState(null);
+  const [deletedPostId, setDeletedPostId] = useState(null);
+
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/post`, requestOptions)
-      .then((res) => res.json())
-      .then((data) => setPosts(data.posts));
+    setSocket(mySocket);
+
+    return () => {
+      if (socket) {
+        socket.disconnect();
+      }
+    };
   }, []);
+
+  useEffect(() => {
+    if (socket) {
+      getPosts();
+      socket.on("delete-post", (deletedPostId) => {
+        setPosts((prevPosts) =>
+          prevPosts.filter((post) => post._id !== deletedPostId)
+        );
+      });
+
+      socket.on("add-post", (insertedPost) => {
+        setPosts((prevPosts) => [...prevPosts, insertedPost]);
+      });
+
+      socket.on("edit-post", (updatedPost) => {
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post._id === updatedPost._id ? updatedPost : post
+          )
+        );
+      });
+    }
+  }, [socket]);
+
+  const getPosts = async () => {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_REACT_APP_API_URL}/post`,
+        requestOptions
+      );
+      const data = await response.json();
+      setPosts(data.posts);
+    } catch (error) {
+      console.error("Failed to fetch posts", error);
+    }
+  };
 
   const createPost = async (event) => {
     event.preventDefault();
@@ -38,7 +83,11 @@ const Posts = () => {
       </form>
       <div>
         {posts.map((post) => (
-          <Post key={post._id} post={post} />
+          <Post
+            onDeletePost={() => setDeletedPostId(post._id)}
+            key={post._id}
+            post={post}
+          />
         ))}
       </div>
     </>

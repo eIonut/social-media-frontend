@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
 import * as auth from "../utils/auth-provider";
+
 import jwt_decode from "jwt-decode";
 import Friend from "./Friend";
 const Chat = () => {
