@@ -11,7 +11,12 @@ function getCurrentUser() {
 }
 
 function getToken() {
-  return window.localStorage.getItem(localStorageKey);
+  const token = window.localStorage.getItem(localStorageKey);
+  if (!token) {
+    window.location.assign("login");
+    return;
+  }
+  return token;
 }
 
 function handleUserResponse(token) {
@@ -50,7 +55,7 @@ async function client(endpoint, data) {
     .then(async (response) => {
       if (response.status === 401) {
         await logout();
-        window.location.assign(window.location);
+        window.location.assign("/login");
         return Promise.reject({ message: "Please re-authenticate." });
       }
       const data = await response.json();

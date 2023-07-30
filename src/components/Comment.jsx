@@ -95,12 +95,13 @@ const Comment = ({ post }) => {
     }
   };
 
-  const editComment = async (e, commentId) => {
+  const editComment = async (event, commentId) => {
     console.log(commentId);
-    e.preventDefault();
+    event.preventDefault();
     const data = {
       description: e.target.elements.description.value,
     };
+    console.log(data);
     const requestOptions = {
       method: "PATCH",
       body: JSON.stringify(data),
@@ -122,27 +123,22 @@ const Comment = ({ post }) => {
   return (
     <>
       {comments.map((comment) => (
-        <div key={comment._id}>
+        <React.Fragment key={comment._id}>
           {!inEditMode && (
             <div>
               <p>{comment.description}</p>
-              <button onClick={() => setInEditMode((prev) => !prev)}>
-                Edit comment
-              </button>
+              <button onClick={() => setInEditMode(true)}>Edit comment</button>
             </div>
           )}
           {inEditMode && comment.user === userId && (
-            <form onSubmit={(e) => editComment(e, comment._id)}>
+            <form onSubmit={(event) => editComment(event, comment._id)}>
               <input
                 name="description"
-                defaultValue={comment.description}
                 type="text"
+                defaultValue={comment.description}
               />
 
-              <button
-                type="submit"
-                onClick={() => setInEditMode((prev) => !prev)}
-              >
+              <button type="submit" onClick={() => setInEditMode(false)}>
                 Save
               </button>
             </form>
@@ -152,7 +148,7 @@ const Comment = ({ post }) => {
               Delete comment
             </button>
           )}
-        </div>
+        </React.Fragment>
       ))}
       <form onSubmit={createComment}>
         <input name="description" type="text" />

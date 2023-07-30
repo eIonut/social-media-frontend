@@ -1,15 +1,7 @@
-import { useEffect, useState } from "react";
-import Register from "./components/Register";
-import Chat from "./components/Chat";
-import Login from "./components/Login";
-import * as auth from "./utils/auth-provider";
+import AppRouter from "./components/AppRouter";
 
 function App() {
-  return (
-    <>
-      <Register></Register>\{" "}
-    </>
-  );
+  return <AppRouter></AppRouter>;
 }
 
 export default App;

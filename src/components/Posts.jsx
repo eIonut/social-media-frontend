@@ -4,6 +4,7 @@ import { client } from "../utils/api-client";
 import Post from "./Post";
 import { socket as mySocket } from "../socket";
 import Comment from "./Comment";
+import Test from "./Test";
 
 const Posts = () => {
   const token = auth.getToken();
@@ -76,6 +77,7 @@ const Posts = () => {
 
   return (
     <>
+      <Test></Test>
       <form onSubmit={(e) => createPost(e)}>
         <input name="image" type="file" />
         <input name="description" type="text" />
