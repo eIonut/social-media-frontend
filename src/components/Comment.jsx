@@ -3,9 +3,9 @@ import { socket as mySocket } from "../socket";
 import * as auth from "../utils/auth-provider";
 import { useState, useEffect } from "react";
 import { client } from "../utils/api-client";
+import CommentForm from "./CommentForm";
 
 const Comment = ({ post }) => {
-  console.log(post);
   const token = auth.getToken();
   const { userId } = auth.getCurrentUser();
 
@@ -39,6 +39,7 @@ const Comment = ({ post }) => {
       });
 
       socket.on("edit-comment", (updatedComment) => {
+        console.log(updatedComment);
         setComments((prevComments) =>
           prevComments.map((comment) =>
             comment._id === updatedComment._id ? updatedComment : comment
@@ -96,16 +97,16 @@ const Comment = ({ post }) => {
   };
 
   const editComment = async (event, commentId) => {
-    console.log(commentId);
     event.preventDefault();
     const data = {
-      description: e.target.elements.description.value,
+      description: event.target.elements.description.value,
     };
-    console.log(data);
+
     const requestOptions = {
       method: "PATCH",
       body: JSON.stringify(data),
       headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     };
@@ -123,32 +124,13 @@ const Comment = ({ post }) => {
   return (
     <>
       {comments.map((comment) => (
-        <React.Fragment key={comment._id}>
-          {!inEditMode && (
-            <div>
-              <p>{comment.description}</p>
-              <button onClick={() => setInEditMode(true)}>Edit comment</button>
-            </div>
-          )}
-          {inEditMode && comment.user === userId && (
-            <form onSubmit={(event) => editComment(event, comment._id)}>
-              <input
-                name="description"
-                type="text"
-                defaultValue={comment.description}
-              />
-
-              <button type="submit" onClick={() => setInEditMode(false)}>
-                Save
-              </button>
-            </form>
-          )}
-          {comment.user === userId && (
-            <button onClick={() => deleteComment(comment._id)}>
-              Delete comment
-            </button>
-          )}
-        </React.Fragment>
+        <CommentForm
+          comment={comment}
+          userId={userId}
+          key={comment._id}
+          editComment={editComment}
+          deleteComment={() => deleteComment(comment._id)}
+        ></CommentForm>
       ))}
       <form onSubmit={createComment}>
         <input name="description" type="text" />
