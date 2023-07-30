@@ -11,7 +11,6 @@ const Comment = ({ post }) => {
 
   const [socket, setSocket] = useState(null);
   const [comments, setComments] = useState([]);
-  const [inEditMode, setInEditMode] = useState(false);
 
   useEffect(() => {
     setSocket(mySocket);
@@ -124,13 +123,21 @@ const Comment = ({ post }) => {
   return (
     <>
       {comments.map((comment) => (
-        <CommentForm
-          comment={comment}
-          userId={userId}
-          key={comment._id}
-          editComment={editComment}
-          deleteComment={() => deleteComment(comment._id)}
-        ></CommentForm>
+        <React.Fragment key={comment._id}>
+          <p>{comment.description}</p>
+          <p>{comment.likes}</p>
+          <CommentForm
+            comment={comment}
+            userId={userId}
+            editComment={editComment}
+          ></CommentForm>
+
+          {comment.user === userId && (
+            <button onClick={() => deleteComment(comment._id)}>
+              Delete comment
+            </button>
+          )}
+        </React.Fragment>
       ))}
       <form onSubmit={createComment}>
         <input name="description" type="text" />
