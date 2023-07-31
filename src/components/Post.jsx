@@ -52,8 +52,8 @@ const Post = ({ post }) => {
   return (
     <div>
       <img src={post.image} alt="" />
-      <p>{post.description}</p>
-      <p>{post.likes}</p>
+      <p>Post: {post.description}</p>
+      <p>Post likes: {post.likes}</p>
       {isLikedByUser ? (
         <button onClick={() => dislikePost(post._id)}>Dislike post</button>
       ) : (

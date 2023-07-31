@@ -13,6 +13,7 @@ const Chat = () => {
   const [message, setMessage] = useState("");
   const [socket, setSocket] = useState(null);
   const [recipientId, setRecipientId] = useState(null);
+
   const config = {
     method: "GET",
     headers: {

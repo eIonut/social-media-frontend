@@ -24,6 +24,9 @@ const Friend = ({
     getAllFriends();
   }, []);
 
+  useEffect(() => {
+    console.log(messages);
+  }, []);
   const getAllFriends = async () => {
     const config = {
       method: "GET",
@@ -45,6 +48,27 @@ const Friend = ({
     }
   };
 
+  // const getRecipient = async () => {
+  //   const config = {
+  //     method: "GET",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${auth.getToken()}`,
+  //     },
+  //   };
+
+  //   try {
+  //     const response = await fetch(
+  //       `${import.meta.env.VITE_REACT_APP_API_URL}/me/user/${recipientId}`,
+  //       config
+  //     );
+  //     const data = await response.json();
+  //     setSenderId(data.name)
+  //   } catch (error) {
+  //     console.error("Failed to get friends:", error);
+  //   }
+  // };
+
   return (
     <div>
       <h2>Friends {friends.length}</h2>
@@ -59,8 +83,9 @@ const Friend = ({
               <div>
                 {messages?.map((messageData, index) => (
                   <div key={index}>
-                    <span>{messageData.sender}</span>
-                    <span>{messageData.message}</span>
+                    {console.log(messageData)}
+                    <p>User: {messageData.sender}</p>
+                    <p>Message: {messageData.message}</p>
                   </div>
                 ))}
               </div>
