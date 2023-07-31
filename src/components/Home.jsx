@@ -2,11 +2,14 @@ import React from "react";
 import Chat from "./Chat";
 import Posts from "./Posts";
 import Navigation from "./Navigation";
+import Notifications from "./Notifications";
 
 const Home = () => {
   return (
     <>
-      <Navigation />
+      <Navigation>
+        <Notifications />
+      </Navigation>
       <Chat />
       <Posts />
     </>
