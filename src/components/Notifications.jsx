@@ -1,10 +1,7 @@
-// afiseaza toate notificarile
-// filtru dupa isRead true sau false
-import React from "react";
+
 import { socket as mySocket } from "../socket";
 import * as auth from "../utils/auth-provider";
 import { useState, useEffect } from "react";
-import { client } from "../utils/api-client";
 import { IoIosNotifications } from "react-icons/io";
 import { styled } from "styled-components";
 
@@ -137,7 +134,6 @@ const Notifications = () => {
         }/notifications/${notificationId}`,
         requestOptions
       );
-      const data = await response.json();
     } catch (error) {
       console.error("Failed to fetch notifications", error);
     }

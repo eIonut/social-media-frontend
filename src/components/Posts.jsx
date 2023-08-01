@@ -54,6 +54,7 @@ const Posts = () => {
   const getPosts = async () => {
     const requestOptions = {
       method: "GET",
+      content: "multipart/form-data",
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -70,19 +71,39 @@ const Posts = () => {
     }
   };
 
-  const createPost = async (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const currentUser = auth.getCurrentUser();
-    const data = {
-      description: event.target.elements.description.value,
-    };
+  const { description, image } = event.target.elements;
 
-    await client("post", { data, token }).then((data) => console.log(data));
+  const formData = new FormData();
+  formData.append('description', description.value);
+  formData.append('image', image.files[0]);
+
+  await createPost(formData);
   };
+
+ const createPost = async (data) => {
+    const requestOptions = {
+      method: "POST",
+      body: data,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    try {
+       await fetch(
+        `${import.meta.env.VITE_REACT_APP_API_URL}/post`,
+        requestOptions
+      );
+    } catch (error) {
+      console.error("Failed to fetch posts", error);
+    }
+  };
+
 
   return (
     <>
-      <form onSubmit={(e) => createPost(e)}>
+      <form onSubmit={async (e) => await handleSubmit(e)}>
         <input name="image" type="file" />
         <input name="description" type="text" />
         <button type="submit">Create post</button>
@@ -90,6 +111,7 @@ const Posts = () => {
       <PostsContainer>
         {posts.map((post) => (
           <div key={post._id}>
+            <img src={import.meta.env.VITE_REACT_APP_ABSOLUTE + post.image} alt="" />
             <Post onDeletePost={() => setDeletedPostId(post._id)} post={post} />
             <Comment post={post._id} />
           </div>
