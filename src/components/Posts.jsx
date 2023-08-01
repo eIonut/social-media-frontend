@@ -4,7 +4,13 @@ import { client } from "../utils/api-client";
 import Post from "./Post";
 import { socket as mySocket } from "../socket";
 import Comment from "./Comment";
+import { styled } from "styled-components";
 
+const PostsContainer = styled.div`
+  height: auto;
+  width: 600px;
+  margin: auto;
+`;
 const Posts = () => {
   const token = auth.getToken();
 
@@ -81,14 +87,14 @@ const Posts = () => {
         <input name="description" type="text" />
         <button type="submit">Create post</button>
       </form>
-      <div>
+      <PostsContainer>
         {posts.map((post) => (
           <div key={post._id}>
             <Post onDeletePost={() => setDeletedPostId(post._id)} post={post} />
             <Comment post={post._id} />
           </div>
         ))}
-      </div>
+      </PostsContainer>
     </>
   );
 };

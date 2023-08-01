@@ -55,9 +55,13 @@ const Post = ({ post }) => {
       <p>Post: {post.description}</p>
       <p>Post likes: {post.likes}</p>
       {isLikedByUser ? (
-        <button onClick={() => dislikePost(post._id)}>Dislike post</button>
+        <button onClick={async () => await dislikePost(post._id)}>
+          Dislike post
+        </button>
       ) : (
-        <button onClick={() => likePost(post._id)}>Like post</button>
+        <button onClick={async () => await likePost(post._id)}>
+          Like post
+        </button>
       )}
 
       {userId === post.user && (
