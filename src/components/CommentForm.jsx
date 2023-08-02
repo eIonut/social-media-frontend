@@ -1,6 +1,9 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import * as auth from "../utils/auth-provider";
+import { styled } from "styled-components";
+import {BiSolidLike, BiDislike} from 'react-icons/bi'
+
 
 const CommentForm = ({ editComment, comment, userId }) => {
   const token = auth.getToken();
@@ -13,7 +16,7 @@ const CommentForm = ({ editComment, comment, userId }) => {
   };
 
   useEffect(() => {
-    if (comment.likedBy.includes(userId)) {
+    if (comment?.likedBy?.includes(userId)) {
       console.log("aici");
       setIsLikedByUser(true);
     }
@@ -61,22 +64,22 @@ const CommentForm = ({ editComment, comment, userId }) => {
     <>
       {!inEditMode && (
         <div>
-          {comment.user === userId && (
+          {comment?.user === userId && (
             <button onClick={() => setInEditMode(true)}>Edit comment</button>
           )}
         </div>
       )}
-      {inEditMode && comment.user === userId && (
+      {inEditMode && comment?.user === userId && (
         <form
           onSubmit={async (e) => {
             handleSubmit(e);
-            await editComment(e, comment._id);
+            await editComment(e, comment?._id);
           }}
         >
           <input
             name="description"
             type="text"
-            defaultValue={comment.description}
+            defaultValue={comment?.description}
           />
 
           <button type="submit">Save</button>
@@ -84,11 +87,11 @@ const CommentForm = ({ editComment, comment, userId }) => {
       )}
 
       {isLikedByUser ? (
-        <button onClick={() => dislikeComment(comment._id)}>
+        <BiDislike onClick={() => dislikeComment(comment?._id)}>
           Dislike comment
-        </button>
+        </BiDislike>
       ) : (
-        <button onClick={() => likeComment(comment._id)}>Like comment</button>
+        <BiSolidLike onClick={() => likeComment(comment?._id)}>Like comment</BiSolidLike>
       )}
     </>
   );

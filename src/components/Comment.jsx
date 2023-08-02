@@ -4,13 +4,39 @@ import * as auth from "../utils/auth-provider";
 import { useState, useEffect } from "react";
 import { client } from "../utils/api-client";
 import CommentForm from "./CommentForm";
+import { styled } from "styled-components";
+import {IoMdSend} from 'react-icons/io'
+const Form = styled.form`
+width: 100%;
+display: flex;
+gap: 10px;
+justify-content: center;
+align-items: center;
+margin-top: 10px;
+`
 
+const CommentDescriptionInput = styled.input`
+border-radius: 20px;
+outline: none;
+border: none;
+padding: 10px;
+width: 100%;
+`
+
+const SendCommentBtn = styled(IoMdSend)`
+width: 30px;
+height: 20px;
+&:hover {
+  cursor: pointer;
+}
+`
 const Comment = ({ post }) => {
   const token = auth.getToken();
   const { userId } = auth.getCurrentUser();
 
   const [socket, setSocket] = useState(null);
   const [comments, setComments] = useState([]);
+  const [showAllComments, setShowAllComments] = useState(false);
 
   useEffect(() => {
     setSocket(mySocket);
@@ -122,7 +148,7 @@ const Comment = ({ post }) => {
 
   return (
     <>
-      {comments.map((comment) => (
+  {comments.map((comment) => (
         <React.Fragment key={comment._id}>
           <p>{comment.description}</p>
           <p>{comment.likes}</p>
@@ -139,10 +165,12 @@ const Comment = ({ post }) => {
           )}
         </React.Fragment>
       ))}
-      <form onSubmit={createComment}>
-        <input name="description" type="text" />
+
+      <Form onSubmit={createComment}>
+        <CommentDescriptionInput placeholder="Write a public comment..." name="description" type="text" />
         <button type="submit">Send comment</button>
-      </form>
+      </Form>
+
     </>
   );
 };

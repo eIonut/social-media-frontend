@@ -15,6 +15,9 @@ const NotificationContainer = styled.div`
   position: relative;
   display: flex;
   width: fit-content;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const NotificationCount = styled.span`
@@ -35,8 +38,8 @@ const NotificationCount = styled.span`
 
 const NotificationPopup = styled.div`
   position: absolute;
-  top: 60px;
-  right: -20px;
+  top: 50px;
+  right: 0;
   width: 200px;
   background-color: purple;
   color: white;
@@ -46,6 +49,10 @@ const NotificationPopup = styled.div`
   max-height: 300px;
   overflow: auto;
 `;
+
+const UnreadMessage = styled.div`color: white; display: flex; justify-content: space-between; align-items: center`
+const ReadMessage = styled.p`color: rgba(255,255,255, 0.6)`
+const UnreadBubble = styled.div`background-color: blue; height: 8px; width: 8px; border-radius: 50%;`
 const Notifications = () => {
   const token = auth.getToken();
   const { userId } = auth.getCurrentUser();
@@ -157,30 +164,32 @@ const Notifications = () => {
       console.error("Failed to fetch notifications", error);
     }
   };
+
+  const unreadNotifications = notifications.filter(notification => !notification.isRead);
   return (
     <div style={{ position: "relative" }}>
       <NotificationContainer
+
         onClick={() => setOpenNotificationPanel((prevState) => !prevState)}
       >
         <NotificationBell></NotificationBell>
-        <NotificationCount>{notifications.length}</NotificationCount>
+        {unreadNotifications.length > 0 && <NotificationCount>{unreadNotifications.length}</NotificationCount>}
       </NotificationContainer>
 
       {openNotificationPanel && notifications.length > 0 && (
         <NotificationPopup>
           {notifications?.map((notification) => (
-            <div style={{ padding: "5px 0" }} key={notification?._id}>
-              <p>{notification?.message}</p>
-              {notification?.isRead ? (
-                <button>Unread</button>
-              ) : (
-                <button onClick={() => readNotification(notification?._id)}>
-                  Read
-                </button>
-              )}
+            <div  onClick={() => readNotification(notification?._id)}  style={{ padding: "5px 0" }} key={notification?._id}>
+              {!notification?.isRead && <UnreadMessage>
+               <p>{notification?.message}</p>
+               <UnreadBubble></UnreadBubble>
+                </UnreadMessage>}
+              {notification?.isRead && <ReadMessage>{notification?.message}</ReadMessage>}
+
               <button onClick={() => deleteNotification(notification?._id)}>
                 Delete
               </button>
+              <p>{new Date(notification.createdAt).toLocaleDateString()}</p>
             </div>
           ))}
         </NotificationPopup>

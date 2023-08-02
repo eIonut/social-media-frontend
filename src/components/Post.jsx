@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 // o sa poti sa dai like/unlike
 // o sa display-uim poza, userul, data, description, nr of likes, si commenturile
 import { useEffect, useState } from "react";
@@ -50,9 +52,14 @@ const Post = ({ post }) => {
 
   return (
     <div>
-      <img src={post.image} alt="" />
-      <p>Post: {post.description}</p>
-      <p>Post likes: {post.likes}</p>
+      <p style={{paddingBottom: '10px'}}>User: {post.user} · <span>{new Date(post.updatedAt).toLocaleDateString()}</span></p>
+      <p>{post.description}</p>
+      <img style={{width: '100%', height: '100%', padding: '20px 0'}} src={import.meta.env.VITE_REACT_APP_ABSOLUTE + post.image} alt="" />
+
+      <div style={{display: 'flex', justifyContent: 'space-between'}}>
+        {post.likes > 0 ? <p>Liked by {post.likes} users</p> : null}
+        <span>{post.comments.length} comments</span>
+      </div>
       {isLikedByUser ? (
         <button onClick={async () => await dislikePost(post._id)}>
           Dislike post

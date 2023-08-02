@@ -1,18 +1,60 @@
 import * as auth from "../utils/auth-provider";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { client } from "../utils/api-client";
 import Post from "./Post";
 import { socket as mySocket } from "../socket";
 import Comment from "./Comment";
 import { styled } from "styled-components";
+import {BsImageFill} from 'react-icons/bs'
 
 const PostsContainer = styled.div`
   height: auto;
-  width: 600px;
+  width: 500px;
   margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
+
+const PostContainer = styled.div`
+width: 100%;
+height: 100%;
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 6px;
+  background-color: rgba(0,0,0,0.8);
+  color: white;
+`
+
+const DescriptionInput = styled.input`
+border-radius: 20px;
+width: 100%;
+padding: 10px;
+border: 1px solid gray;
+`
+
+
+const PostForm = styled.form`
+width: 100%;
+`
+
+const CreatePostBtn = styled.button`
+  padding: 6px;
+  border-radius: 6px;
+  outline: none;
+  background-color: transparent;
+  border: 1px solid gray;
+  margin-bottom: 20px;
+  &:hover {
+    cursor: pointer;
+  }
+`
 const Posts = () => {
   const token = auth.getToken();
+
+  const descriptionRef = useRef(null)
+  const imageRef = useRef(null)
 
   const [posts, setPosts] = useState([]);
   const [socket, setSocket] = useState(null);
@@ -80,6 +122,9 @@ const Posts = () => {
   formData.append('image', image.files[0]);
 
   await createPost(formData);
+
+      descriptionRef.current.value = "";
+    imageRef.current.value = null;
   };
 
  const createPost = async (data) => {
@@ -103,18 +148,22 @@ const Posts = () => {
 
   return (
     <>
-      <form onSubmit={async (e) => await handleSubmit(e)}>
-        <input name="image" type="file" />
-        <input name="description" type="text" />
-        <button type="submit">Create post</button>
-      </form>
+
       <PostsContainer>
+         <PostForm style={{position: 'relative', display: 'flex', flexDirection: 'column', gap: '50px', color: 'black'}} onSubmit={async (e) => await handleSubmit(e)}>
+        <input  style={{ opacity: 0, position: 'absolute', top: '50px', left: 0, zIndex: 9999}}
+ ref={imageRef} name="image" type="file" />
+        <BsImageFill style={{position: 'absolute', top: '50px', left: 0, width: '30px', height: '30px'}}></BsImageFill>
+
+        <DescriptionInput placeholder='What are you thinking of?' ref={descriptionRef} name="description" type="text" />
+        <CreatePostBtn type="submit">Create post</CreatePostBtn>
+      </PostForm>
+
         {posts.map((post) => (
-          <div key={post._id}>
-            <img src={import.meta.env.VITE_REACT_APP_ABSOLUTE + post.image} alt="" />
+          <PostContainer key={post._id}>
             <Post onDeletePost={() => setDeletedPostId(post._id)} post={post} />
             <Comment post={post._id} />
-          </div>
+          </PostContainer>
         ))}
       </PostsContainer>
     </>
